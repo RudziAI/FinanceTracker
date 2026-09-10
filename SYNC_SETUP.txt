@@ -1,0 +1,28 @@
+FINANCE TRACKER — ONE-TIME CLOUD SYNC SETUP
+
+The website files are already wired for cross-device sync.
+The private Google Sheet schema has been prepared.
+
+You still need one Google-side authorization step because ChatGPT cannot deploy Apps Script inside your Google account for you.
+
+1. Open the Finance Tracker Database Google Sheet.
+2. Extensions > Apps Script.
+3. Replace the editor contents with apps-script/Code.gs from this folder.
+4. Replace PASTE_THE_SAME_RANDOM_SECRET_HERE with a long random secret of your choice.
+5. Deploy > New deployment > Web app.
+   Execute as: Me
+   Who has access: Anyone
+   (The endpoint is protected by the secret and only Vercel stores that secret.)
+6. Copy the Web app URL.
+7. In Terminal, inside your Finance Tracker project folder, run:
+
+   npx vercel env add FINANCE_APPS_SCRIPT_URL production
+   npx vercel env add FINANCE_SYNC_SECRET production
+
+   Paste the web app URL for the first value and the SAME secret for the second.
+
+8. Deploy:
+
+   npx vercel --prod
+
+On the first synced load on your Mac, the tracker will migrate your locally saved confirmed balance if the cloud balance is still blank. Existing locally edited Direct Debits/Subscriptions marked as saved edits will also be migrated before cloud data takes over.
