@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rudi — Finance Dashboard</title>
+<style>
+:root{
+  --teal:#347b73; --teal2:#67a79f; --gold:#aa6f2d; --gold2:#bc8446;
+  --ink:#17231f; --muted:#697570; --panel:#ffffff;
+  --soft:#edf2ef; --line:#d8dedb; --bg:#f6f5f0;
+}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{width:100%;max-width:100%;padding:26px}
+.top{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:16px;margin-bottom:20px;width:100%;max-width:1120px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:19px}
+.balance{border-top:3px solid var(--teal)}
+.kick{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);font-weight:800}
+.big{font-size:56px;font-weight:760;margin:7px 0;letter-spacing:-.04em}
+.muted{font-size:11px;color:var(--muted)}
+.inputrow{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.inputrow input{min-height:42px;min-width:170px;flex:1;border:1px solid var(--line);border-radius:9px;padding:8px 11px;background:var(--soft);color:inherit;font-size:16px}
+.inputrow button{min-height:42px;border:0;border-radius:9px;padding:8px 14px;background:var(--teal);color:#fff;font-weight:750;cursor:pointer}
+.actionbar{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.actionbtn{min-height:42px;display:inline-flex;align-items:center;justify-content:center;padding:9px 14px;border:1px solid var(--line);border-radius:9px;background:var(--soft);color:var(--ink);text-decoration:none;font-size:12px;font-weight:760;cursor:pointer}
+.actionbtn:hover{border-color:var(--teal);color:var(--teal)}
+.summary{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;margin-top:12px}
+.summary strong{text-align:right}
+.outc{color:var(--gold)} .inc{color:var(--teal)}
+.workspace{display:grid;grid-template-columns:minmax(0,3fr) minmax(300px,1fr);gap:18px;align-items:start;width:100%}
+.calendar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;min-width:0}
+.month{min-width:0}.month h2{font-size:20px;margin:3px 0 9px}
+.tablebox,.sidebox{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;min-width:0}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{padding:9px 8px;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);text-align:left;border-bottom:1px solid var(--line)}
+td{padding:6px 8px;font-size:10px;border-bottom:1px solid var(--line);vertical-align:top;height:27px}
+tr:last-child td{border-bottom:0}
+.date{width:65px;font-weight:700}.remaining{width:88px}
+.out{color:var(--gold)} .in{color:var(--teal)}
+.event{display:flex;justify-content:space-between;gap:5px;margin-bottom:3px;min-width:0}.event span:first-child{min-width:0;overflow-wrap:anywhere}
+.event:last-child{margin-bottom:0}
+.money{font-variant-numeric:tabular-nums;white-space:nowrap}
+.today{background:#e7f0ee}
+.tag{font-size:7px;text-transform:uppercase;letter-spacing:.05em;border:1px solid currentColor;border-radius:99px;padding:2px 4px;margin-left:3px;white-space:nowrap}
+.sidebox{border-top:3px solid var(--teal)}
+.sideTitle{padding:15px;border-bottom:1px solid var(--line)}
+.sideTitle h3{margin:3px 0 0;font-size:15px}
+.listhead,.listrow{display:grid;grid-template-columns:40px minmax(0,1fr) 64px 72px;gap:6px;align-items:center;min-width:0}
+.listhead{background:var(--soft);padding:8px 11px;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.04em}
+.listrow{padding:9px 11px;border-bottom:1px solid var(--line);font-size:10px}
+.listrow span:first-child{color:var(--muted);font-size:9px}
+.listrow strong{text-align:right;white-space:nowrap}
+.enddate{font-size:9px;color:var(--gold2);text-align:right;white-space:nowrap}
+.section{padding:10px 11px 5px;color:var(--gold);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em}
+.note{font-size:9px;color:var(--muted);padding:10px 11px;background:#f2f3ef}
+.footerNote{margin-top:16px;padding:11px 13px;border-left:3px solid var(--gold);background:var(--soft);border-radius:8px;color:var(--muted);font-size:10px;width:100%;max-width:1120px}
+.expiring{background:#fbf6ee}
+@media(max-width:1180px){
+  .workspace{grid-template-columns:minmax(0,2.4fr) minmax(275px,.9fr)}
+  .listhead,.listrow{grid-template-columns:38px minmax(0,1fr) 60px 68px;font-size:9.5px}
+  td{font-size:9.5px;padding:6px}
+}
+@media(max-width:900px){
+  .app{padding:18px 10px}
+  .workspace{grid-template-columns:1fr}
+  .calendar{grid-template-columns:1fr 1fr}
+  .top{grid-template-columns:1fr}
+  .sidebox{max-width:100%}
+}
+@media(max-width:720px){
+  .calendar{grid-template-columns:1fr}
+  .listhead,.listrow{grid-template-columns:42px minmax(0,1fr) 68px 74px}
+}
+@media(max-width:520px){
+  .app{padding:12px 8px}
+  .big{font-size:42px}
+  th,td{padding-left:5px;padding-right:5px}
+  .date{width:54px}.remaining{width:74px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <section class="card balance">
+      <div class="kick">Confirmed bank balance</div>
+      <div id="balanceDisplay" class="big">TBC</div>
+      <div id="baselineDate" class="muted">Baseline: —</div>
+      <div class="inputrow">
+        <input id="balanceInput" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Enter confirmed balance">
+        <button id="setBalance" type="button">Save balance</button>
+      </div>
+      <div id="saveStatus" class="muted" style="margin-top:8px">Connecting to secure cloud sync…</div>
+      <nav class="actionbar" aria-label="Finance tracker tools">
+        <a class="actionbtn" href="/outgoings">Manage Direct Debits</a>
+        <a class="actionbtn" href="/photography-house.html">Photography + New House</a>
+      </nav>
+    </section>
+
+    <section class="card">
+      <div class="kick">Two-month projection</div>
+      <div class="summary">
+        <span>August dated outgoings</span><strong id="augOut" class="outc">—</strong>
+        <span>August projected income</span><strong id="augIn" class="inc">—</strong>
+        <span>September dated outgoings</span><strong id="sepOut" class="outc">—</strong>
+        <span>September projected income</span><strong id="sepIn" class="inc">—</strong>
+        <span>End September projection</span><strong id="endBalance">TBC</strong>
+      </div>
+    </section>
+  </div>
+
+  <div class="workspace">
+    <div class="calendar">
+      <section class="month">
+        <div class="kick">Month one</div>
+        <h2>August 2026</h2>
+        <div class="tablebox">
+          <table>
+            <thead><tr><th class="date">Date</th><th>Outgoing</th><th>Incoming</th><th class="remaining">Remaining</th></tr></thead>
+            <tbody id="augBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="month">
+        <div class="kick">Month two</div>
+        <h2>September 2026</h2>
+        <div class="tablebox">
+          <table>
+            <thead><tr><th class="date">Date</th><th>Outgoing</th><th>Incoming</th><th class="remaining">Remaining</th></tr></thead>
+            <tbody id="sepBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <aside>
+      <div class="kick">Monthly reference</div>
+      <h2 style="font-size:20px;margin:3px 0 9px">Your outgoings</h2>
+      <div class="sidebox" id="outgoingsReference"></div>
+    </aside>
+  </div>
+
+  <div class="footerNote">Photography income now uses the exact Due Date from the uploaded payment export. The displayed incoming amount is Rudi's 50% share of the file's Total Amount. Sage remains an estimate until the actual payday amount is supplied.</div>
+</div>
+
+<script>
+(() => {
+  const fmt = n => '£' + n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let baseline = null;
+  const STORAGE_KEY = 'finance_tracker_confirmed_balance_v1';
+
+  const data = {
+    aug: {
+      3:{o:[['Barclays mortgage',455.16],['City Council',171],['Admiral',110.18],['Northumbrian Water',50],['DVLA · GJ15 LPF',14.93]]},
+      4:{o:[['Hiscox',8.17]]},
+      5:{o:[['Novuna · Rudi half',96.04]]},
+      6:{o:[['Novuna · Rudi half',69.92]]},
+      17:{o:[['Omni Capital',69.37]]},
+      18:{o:[['Artlist · Rudi share',7.80]]},
+      19:{o:[['Canva · Rudi share',6.50]]},
+      20:{o:[['Google Play · Rudi share',6.00]]},
+      21:{o:[['Novuna',133.60]]},
+      25:{i:[['Sage pay · latest verified value',1760.70,'est']]},
+      27:{i:[['Photography · Sharon Kaur',1250.00,'due']]},
+      28:{o:[['Google Nest',8],['Google Play · Rudi share',11]]},
+      29:{o:[['Spotify · Rudi share',11]]},
+      30:{o:[['Amazon Prime',8.99]]}
+    },
+    sep: {
+      3:{i:[['Photography · Rebecca and James',1500.00,'due']]},
+      12:{i:[['Photography · Pam and Nath Farry',1093.75,'due']]},
+      25:{i:[['Sage pay · latest verified value',1760.70,'est']]}
+    }
+  };
+
+  const OUTGOINGS_STORAGE_KEY = 'finance_tracker_recurring_outgoings_v1';
+  const recurringDefaults = [
+    {id:'dd-mortgage-old',type:'Direct Debit',date:'1st',name:'Barclays mortgage (old house)',amount:455.16,status:'Keep temporarily',notes:'Old house; expected to continue for a few months until sale',endDate:''},
+    {id:'dd-council',type:'Direct Debit',date:'1st',name:'Newcastle City Council',amount:171.00,status:'Keep',notes:'Will continue for new house',endDate:''},
+    {id:'dd-admiral',type:'Direct Debit',date:'1st',name:'Admiral Insurance',amount:110.18,status:'Keep',notes:'',endDate:''},
+    {id:'dd-ee-device',type:'Direct Debit',date:'1st',name:'EE device payments',amount:99.38,status:'Keep',notes:'£99.38 monthly on the 1st; user-confirmed 9 Sep 2026',endDate:''},
+    {id:'dd-ee-service',type:'Direct Debit',date:'1st',name:'EE Limited',amount:123.20,status:'Keep',notes:'Approximately £123.20 monthly on the 1st; user-confirmed 9 Sep 2026',endDate:''},
+    {id:'dd-village-hotel-gym',type:'Direct Debit',date:'1st',name:'Village Hotel (gym)',amount:48.00,status:'Keep',notes:'Statement descriptor: VG Trading No 1 LT; £48 monthly on the 1st; user-confirmed 9 Sep 2026',endDate:''},
+    {id:'dd-water',type:'Direct Debit',date:'1st',name:'Northumbrian Water',amount:50.00,status:'Keep',notes:'Will continue for new house',endDate:''},
+    {id:'dd-dvla',type:'Direct Debit',date:'1st',name:'DVLA - GJ15 LPF',amount:14.93,status:'Keep',notes:'',endDate:''},
+    {id:'dd-hiscox',type:'Direct Debit',date:'1st',name:'Hiscox Underwriting',amount:8.17,status:'Keep',notes:'',endDate:''},
+    {id:'dd-novuna-192',type:'Direct Debit',date:'5th',name:'Novuna - Rudi half',amount:96.04,status:'Keep',notes:'50% of £192.08',endDate:'4 Oct 2026'},
+    {id:'dd-novuna-139',type:'Direct Debit',date:'6th',name:'Novuna - Rudi half',amount:69.92,status:'Keep',notes:'50% of £139.84',endDate:'5 Oct 2027'},
+    {id:'dd-omni',type:'Direct Debit',date:'16th',name:'Omni Capital RF',amount:69.37,status:'Keep',notes:'',endDate:'11 Mar 2027'},
+    {id:'dd-novuna-full',type:'Direct Debit',date:'21st',name:'Novuna - Rudi responsibility',amount:133.60,status:'Keep',notes:'Rudi pays full amount',endDate:''},
+    {id:'dd-british-gas',type:'Direct Debit',date:'28th',name:'British Gas',amount:null,status:'Keep',notes:'Variable amount',endDate:''},
+    {id:'sub-amazon',type:'Subscription',date:'30th',name:'Amazon Prime',amount:8.99,status:'Keep',notes:'Rudi only',endDate:''},
+    {id:'sub-spotify',type:'Subscription',date:'29th',name:'Spotify',amount:11.00,status:'Keep',notes:'Rudi 50% share',endDate:''},
+    {id:'sub-microsoft',type:'Subscription',date:'3rd',name:'Microsoft',amount:5.25,status:'Keep for now',notes:'Rudi 50% share',endDate:''},
+    {id:'sub-canva',type:'Subscription',date:'19th',name:'Canva',amount:6.50,status:'Keep for now',notes:'Rudi 50% share',endDate:''},
+    {id:'sub-artlist',type:'Subscription',date:'18th',name:'Artlist',amount:7.80,status:'Keep',notes:'Rudi 50% share',endDate:''},
+    {id:'sub-nest',type:'Subscription',date:'28th',name:'Google Nest',amount:8.00,status:'Keep',notes:'Rudi only',endDate:''},
+    {id:'sub-google20',type:'Subscription',date:'20th',name:'Google Play',amount:6.00,status:'Keep',notes:'Rudi 50% share',endDate:''},
+    {id:'sub-google28',type:'Subscription',date:'28th',name:'Google Play',amount:11.00,status:'Keep',notes:'Rudi 50% share',endDate:''}
+  ];
+
+  function loadRecurring(){
+    try{
+      const raw = localStorage.getItem(OUTGOINGS_STORAGE_KEY);
+      if(!raw) return recurringDefaults.map(x=>({...x}));
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : recurringDefaults.map(x=>({...x}));
+    }catch(_){
+      return recurringDefaults.map(x=>({...x}));
+    }
+  }
+
+  function isActiveRecurring(item){
+    const s = String(item.status||'').toLowerCase();
+    return !/(stopp|cancel|ended|inactive|closed)/.test(s);
+  }
+
+  function dayNumber(label){
+    const m = String(label||'').match(/^\s*(\d{1,2})/);
+    if(!m) return null;
+    const n = Number(m[1]);
+    return n>=1 && n<=31 ? n : null;
+  }
+
+  let recurring = loadRecurring();
+
+  function injectRecurringForSeptember(){
+    recurring.filter(x => (x.type==='Direct Debit' || x.type==='Subscription') && isActiveRecurring(x)).forEach(item=>{
+      const day = dayNumber(item.date);
+      if(!day || day > 30 || item.amount===null || item.amount==='' || !Number.isFinite(Number(item.amount))) return;
+      if(!data.sep[day]) data.sep[day] = {};
+      if(!data.sep[day].o) data.sep[day].o = [];
+      data.sep[day].o.push([item.name, Number(item.amount)]);
+    });
+  }
+
+  function renderOutgoingsReference(){
+    const box = document.getElementById('outgoingsReference');
+    if(!box) return;
+    const groups = [
+      ['Direct Debit','Essential','Direct debits'],
+      ['Subscription','Subscriptions','Subscriptions']
+    ];
+    let out = '';
+    groups.forEach(([type,kicker,title])=>{
+      const items = recurring.filter(x=>x.type===type && isActiveRecurring(x));
+      if(type==='Direct Debit'){
+        out += `<div class="sideTitle"><div class="kick">${kicker}</div><h3>${title}</h3></div>`;
+        out += `<div class="listhead"><span>Date</span><span>Name</span><span style="text-align:right">Amount</span><span style="text-align:right">End date</span></div>`;
+      } else {
+        out += `<div class="section">${title}</div>`;
+      }
+      items.forEach(item=>{
+        const amount = item.amount===null || item.amount==='' || !Number.isFinite(Number(item.amount)) ? 'Variable' : fmt(Number(item.amount));
+        const editedTag = item.edited ? ' <span class="tag">saved edit</span>' : '';
+        out += `<div class="listrow"><span>${item.date||'TBC'}</span><span>${item.name}${editedTag}</span><strong>${amount}</strong><span class="enddate">${item.endDate||''}</span></div>`;
+      });
+    });
+    out += `<div class="section">Extra / flexible</div>
+      <div class="listrow"><span>Weekly</span><span>Food</span><strong>£50.00</strong><span></span></div>
+      <div class="listrow"><span>Month</span><span>Diesel</span><strong>~£150</strong><span></span></div>
+      <div class="listrow"><span>Month</span><span>Separate savings</span><strong>£75.00</strong><span></span></div>
+      <div class="listrow"><span>TBC</span><span>New mortgage</span><strong>~£300</strong><span></span></div>
+      <div class="listrow"><span>TBC</span><span>Life insurance</span><strong>~£25</strong><span></span></div>
+      <div class="note">Direct Debit and Subscription entries can be changed from Manage Direct Debits. Saved edits sync through the private tracker database and do not rewrite the uploaded monthly_outgoings reference file.</div>`;
+    box.innerHTML = out;
+  }
+
+
+  function eventHtml(items, cls){
+    return (items||[]).map(([name,value,status]) => {
+      const tag = status==='est' ? ' <span class="tag">est</span>' :
+                  status==='due' ? ' <span class="tag">due</span>' : '';
+      return `<div class="event ${cls}"><span>${name}${tag}</span><strong class="money">${fmt(value)}</strong></div>`;
+    }).join('');
+  }
+
+  function totals(key){
+    let o=0,i=0;
+    Object.values(data[key]).forEach(d=>{
+      (d.o||[]).forEach(x=>o+=x[1]);
+      (d.i||[]).forEach(x=>i+=x[1]);
+    });
+    return [o,i];
+  }
+
+  function londonNow(){
+    const parts = new Intl.DateTimeFormat('en-GB',{
+      timeZone:'Europe/London', year:'numeric', month:'2-digit', day:'2-digit'
+    }).formatToParts(new Date()).reduce((a,p)=>(a[p.type]=p.value,a),{});
+    return {year:Number(parts.year),month:Number(parts.month)-1,day:Number(parts.day)};
+  }
+  const today = londonNow();
+  const todayY = today.year;
+  const todayM = today.month;
+  const todayD = today.day;
+  const baselineLabel = new Intl.DateTimeFormat('en-GB',{
+    timeZone:'Europe/London',day:'2-digit',month:'long',year:'numeric'
+  }).format(new Date());
+  document.getElementById('baselineDate').textContent = `Baseline: ${baselineLabel}`;
+
+  function render(){
+    let running = baseline;
+    let active = false;
+
+    [['aug',7,31,'augBody'],['sep',8,30,'sepBody']].forEach(([key,month,count,id])=>{
+      const body = document.getElementById(id);
+      body.innerHTML = '';
+
+      for(let day=1; day<=count; day++){
+        const e = data[key][day] || {};
+        const row = document.createElement('tr');
+        const isToday = todayY===2026 && todayM===month && todayD===day;
+
+        if(isToday) row.className='today';
+        if(isToday && running!==null) active=true;
+
+        if(active){
+          (e.o||[]).forEach(x=>running-=x[1]);
+          (e.i||[]).forEach(x=>running+=x[1]);
+        }
+
+        const dt = new Date(Date.UTC(2026,month,day));
+        row.innerHTML =
+          `<td class="date">${weekdays[dt.getUTCDay()]} ${day}${isToday?' <span class="tag">today</span>':''}</td>` +
+          `<td>${eventHtml(e.o,'out')}</td>` +
+          `<td>${eventHtml(e.i,'in')}</td>` +
+          `<td class="money ${active?'':'muted'}">${active?fmt(running):'—'}</td>`;
+        body.appendChild(row);
+      }
+    });
+
+    document.getElementById('endBalance').textContent = running===null ? 'TBC' : fmt(running);
+  }
+
+  function updateTotals(){
+    const [ao,ai] = totals('aug');
+    const [so,si] = totals('sep');
+    document.getElementById('augOut').textContent = fmt(ao);
+    document.getElementById('augIn').textContent = fmt(ai);
+    document.getElementById('sepOut').textContent = fmt(so);
+    document.getElementById('sepIn').textContent = fmt(si);
+  }
+
+  async function api(resource, options={}){
+    const response = await fetch(`/api/finance?resource=${encodeURIComponent(resource)}`,{
+      cache:'no-store',
+      headers:{'Content-Type':'application/json',...(options.headers||{})},
+      ...options
+    });
+    if(!response.ok){
+      let detail='';
+      try{detail=(await response.json()).error||''}catch(_){}
+      throw new Error(detail || `Sync request failed (${response.status})`);
+    }
+    return response.json();
+  }
+
+  function applyBalance(value, status){
+    const n = Number(value);
+    if(!Number.isFinite(n) || n < 0) return false;
+    baseline = Math.round(n*100)/100;
+    document.getElementById('balanceDisplay').textContent = fmt(baseline);
+    document.getElementById('balanceInput').value = baseline.toFixed(2);
+    localStorage.setItem(STORAGE_KEY, String(baseline));
+    if(status) document.getElementById('saveStatus').textContent = status;
+    return true;
+  }
+
+  async function initialiseCloud(){
+    const localBalance = localStorage.getItem(STORAGE_KEY);
+    const localRecurring = loadRecurring();
+    const hasLocalRecurringEdits = localRecurring.some(x=>x && x.edited);
+
+    try{
+      if(hasLocalRecurringEdits){
+        await api('outgoings',{method:'POST',body:JSON.stringify({items:localRecurring})});
+        recurring = localRecurring;
+      }else{
+        const cloudOut = await api('outgoings');
+        if(Array.isArray(cloudOut.items) && cloudOut.items.length){
+          recurring = cloudOut.items;
+          localStorage.setItem(OUTGOINGS_STORAGE_KEY,JSON.stringify(recurring));
+        }
+      }
+
+      injectRecurringForSeptember();
+      renderOutgoingsReference();
+      updateTotals();
+
+      const cloudState = await api('state');
+      if(cloudState.confirmedBalance !== null && cloudState.confirmedBalance !== ''){
+        applyBalance(cloudState.confirmedBalance,'Synced online · available on your authorised devices');
+      }else if(localBalance !== null && Number.isFinite(Number(localBalance)) && Number(localBalance)>=0){
+        applyBalance(localBalance,'Migrating your saved balance to cloud sync…');
+        await api('state',{method:'POST',body:JSON.stringify({confirmedBalance:baseline})});
+        document.getElementById('saveStatus').textContent='Synced online · your Mac balance has been migrated';
+      }else{
+        document.getElementById('saveStatus').textContent='Cloud sync connected · balance is awaiting confirmation';
+      }
+    }catch(err){
+      recurring = localRecurring;
+      injectRecurringForSeptember();
+      renderOutgoingsReference();
+      updateTotals();
+      if(localBalance !== null) applyBalance(localBalance,'Cloud sync unavailable · using this device’s saved balance');
+      else document.getElementById('saveStatus').textContent='Cloud sync unavailable · using local fallback';
+      console.error(err);
+    }
+    render();
+  }
+
+  window.addEventListener('storage', (event)=>{
+    if(event.key===OUTGOINGS_STORAGE_KEY) location.reload();
+  });
+
+  document.getElementById('setBalance').addEventListener('click',async()=>{
+    const raw = document.getElementById('balanceInput').value.trim();
+    const value = Number(raw);
+    if(!raw || !Number.isFinite(value) || value < 0) return;
+    applyBalance(value,'Saving online…');
+    render();
+    try{
+      await api('state',{method:'POST',body:JSON.stringify({confirmedBalance:baseline})});
+      document.getElementById('saveStatus').textContent='Saved online · synced across devices';
+    }catch(err){
+      document.getElementById('saveStatus').textContent='Saved on this device · cloud sync failed';
+      console.error(err);
+    }
+  });
+
+  initialiseCloud();
+})();
+</script>
+</body>
+</html>
