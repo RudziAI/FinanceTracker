@@ -16,7 +16,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,
 .nav a{padding:10px 14px;border:1px solid var(--line);border-radius:9px;background:var(--soft);color:var(--ink);text-decoration:none;font-size:12px;font-weight:760}
 .nav a.active{background:var(--teal);color:#fff;border-color:var(--teal)}
 .kick{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);font-weight:800}
-.head{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;max-width:1500px;margin-bottom:18px}
+.head{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;max-width:1500px;margin-bottom:18px}
 .card,.tablebox,.side{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:18px}
 .card{border-top:3px solid var(--teal)}
 h1{font-size:28px;margin:5px 0 8px}
@@ -24,10 +24,10 @@ h1{font-size:28px;margin:5px 0 8px}
 .summary strong{text-align:right}
 .income{color:var(--teal)}
 .out{color:var(--gold)}
-.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.pill{font-size:10px;border:1px solid var(--line);border-radius:99px;padding:4px 8px;background:var(--soft)}
-.pill.ok{border-color:var(--teal);color:var(--teal)}
-.pill.warn{border-color:var(--gold);color:var(--gold)}
+.inputrow{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
+.inputrow label{font-size:11px;font-weight:760;color:var(--muted);width:100%}
+.inputrow input{min-height:42px;min-width:160px;flex:1;border:1px solid var(--line);border-radius:9px;padding:8px 11px;background:var(--soft);color:inherit;font-size:16px}
+.inputrow button{min-height:42px;border:0;border-radius:9px;padding:8px 14px;background:var(--teal);color:#fff;font-weight:750;cursor:pointer}
 .workspace{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:16px;max-width:1500px;align-items:start}
 .months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .month h2{font-size:19px;margin:3px 0 8px}
@@ -61,20 +61,22 @@ td{padding:6px 7px;font-size:9.5px;border-bottom:1px solid var(--line);height:27
     <section class="card">
       <div class="kick">Dedicated pot · finance_v13</div>
       <h1>Photography + New House</h1>
-      <div class="muted">Three-month daily calendar · September–November 2026 · personal / new-house pot only. Sage salary stays on the old-house / joint side.</div>
-      <div class="pills">
-        <span class="pill ok">Confirmed vs expected vs planning labelled</span>
-        <span class="pill warn">Undated costs stay off the calendar</span>
-        <span class="pill">Food remains £50 / week</span>
+      <div class="muted">Three-month calendar · Sep–Nov 2026 · personal / new-house pot only. Sage salary stays on the old-house / joint side.</div>
+      <div class="inputrow">
+        <label for="startBalance">Starting balance (£)</label>
+        <input id="startBalance" type="number" min="0" step="0.01" inputmode="decimal" value="300">
+        <button id="saveBalance" type="button">Save starting balance</button>
       </div>
+      <div id="saveStatus" class="muted" style="margin-top:8px">Uses the same confirmed balance as the main dashboard when cloud sync is available.</div>
     </section>
     <section class="card">
       <div class="kick">Running new-house pot</div>
       <div class="summary">
-        <span>Confirmed starting balance · 10 Sep 2026</span><strong>£300.00</strong>
-        <span>Sage Share & Save · 18 Sep</span><strong class="income">~£1,225.00 <span class="tag">expected</span></strong>
-        <span>Pam & Nath · approved 50% personal share · 18 Sep</span><strong class="income">£1,093.75 <span class="tag">planning</span></strong>
-        <span>Dated planning deductions · 1 Oct / 1 Nov</span><strong class="out">£546.00 / month</strong>
+        <span>Starting balance · from 10 Sep 2026</span><strong id="startLabel">£300.00</strong>
+        <span>Sage Share &amp; Save · 18 Sep</span><strong class="income">~£1,225.00 <span class="tag">expected</span></strong>
+        <span>Pam &amp; Nath · approved 50% share · 18 Sep</span><strong class="income">£1,093.75 <span class="tag">planning</span></strong>
+        <span>1st of month (mortgage, council, water, life, diesel, gas+elec)</span><strong class="out">£806.00</strong>
+        <span>Food every Sunday</span><strong class="out">£50.00</strong>
         <span>ChatGPT · 5th</span><strong class="out">£22.00</strong>
       </div>
     </section>
@@ -83,26 +85,31 @@ td{padding:6px 7px;font-size:9.5px;border-bottom:1px solid var(--line);height:27
   <div class="workspace">
     <div id="months" class="months"></div>
     <aside class="side">
-      <div class="kick">Not dated</div>
-      <h3>Keep off the calendar</h3>
-      <div class="siderow"><span>Food</span><strong>£50 / week</strong></div>
-      <div class="siderow"><span>Diesel</span><strong>~£150 / month</strong></div>
-      <div class="siderow"><span>Gas + electricity</span><strong>~£110 / month est.</strong></div>
-      <p class="muted" style="margin:12px 0 0;font-size:11px;line-height:1.45">Handover rule: do not invent payment dates for these. They are new-house scope but they do not move the daily remaining column until a date is approved.</p>
+      <div class="kick">User-approved dates</div>
+      <h3>Now on the calendar</h3>
+      <div class="siderow"><span>Food</span><strong>£50 every Sunday</strong></div>
+      <div class="siderow"><span>Diesel</span><strong>£150 on the 1st</strong></div>
+      <div class="siderow"><span>Gas + electricity</span><strong>£110 on the 1st</strong></div>
+      <p class="muted" style="margin:12px 0 0;font-size:11px;line-height:1.45">Dates approved 11 Sep 2026. Items before the 10 Sep starting-balance date do not reduce the running pot.</p>
       <p class="muted" style="margin:10px 0 0;font-size:11px;line-height:1.45">Old-house mortgage, Admiral, EE and other joint costs stay on the main dashboard.</p>
     </aside>
   </div>
 
   <div class="note">
-    <strong>Photography:</strong> Photography Organiser is authoritative. Pam & Nath wedding 12 Oct 2026. Last verified business remaining balance £2,187.50. Approved personal share for this booking only is 50% = £1,093.75. finance_v13 plans the personal transfer 24 days before the wedding = <strong>18 Sep 2026</strong>. That is expected / planning, not confirmed receipt. Remaining balance £0 on other 2026 bookings is not future income.<br><br>
-    <strong>Dated planning outgoings:</strong> new mortgage ~£300, Newcastle City Council £171, Northumbrian Water £50 and life insurance ~£25 sit on the 1st until real dates exist. ChatGPT £22 sits on the 5th. Home insurance and dog food are not in the approved dedicated-view scope, so they are not on this calendar.
+    <strong>Photography:</strong> Organiser remaining for Pam &amp; Nath is £2,187.50. Approved personal share 50% = £1,093.75, planned 18 Sep 2026 (24 days before 12 Oct). Expected / planning only until money hits the personal account. £0 remaining on other 2026 bookings is not future income.<br><br>
+    <strong>1st of each month:</strong> new mortgage £300, council £171, water £50, life insurance £25, diesel £150, gas + electricity £110. ChatGPT £22 on the 5th. Food £50 every Sunday.
   </div>
 </div>
 <script>
 const fmt = n => '£' + Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
-const START = 300;
-const START_Y = 2026, START_M = 8, START_D = 10; // 10 Sep 2026 confirmed
-const months = [
+const STORAGE_KEY = 'finance_tracker_confirmed_balance_v1';
+const START_Y = 2026, START_M = 8, START_D = 10;
+const DEFAULT_START = 300;
+const FOOD = 50;
+const DIESEL = 150;
+const ENERGY = 110;
+
+const baseMonths = [
   {name:'September 2026', y:2026, m:8, days:30, events:{
     18:{i:[
       ['Sage Share & Save', 1225, 'expected'],
@@ -129,6 +136,33 @@ const months = [
   }}
 ];
 
+function cloneMonths(){
+  return baseMonths.map(mo => {
+    const events = {};
+    Object.keys(mo.events).forEach(k => {
+      const src = mo.events[k];
+      events[k] = {
+        o: (src.o||[]).map(x => x.slice()),
+        i: (src.i||[]).map(x => x.slice())
+      };
+    });
+    for (let d=1; d<=mo.days; d++){
+      const wd = new Date(Date.UTC(mo.y, mo.m, d)).getUTCDay();
+      if (!events[d]) events[d] = {};
+      if (!events[d].o) events[d].o = [];
+      if (!events[d].i) events[d].i = [];
+      if (d === 1){
+        events[d].o.push(['Diesel', DIESEL, 'approved']);
+        events[d].o.push(['Gas + electricity', ENERGY, 'approved']);
+      }
+      if (wd === 0){
+        events[d].o.push(['Food', FOOD, 'approved']);
+      }
+    }
+    return {name:mo.name, y:mo.y, m:mo.m, days:mo.days, events};
+  });
+}
+
 function ev(items, cls){
   return (items||[]).map(x =>
     `<div class="event ${cls}"><span>${x[0]}${x[2]?` <span class="tag">${x[2]}</span>`:''}</span><strong class="money">${fmt(x[1])}</strong></div>`
@@ -138,30 +172,90 @@ function ev(items, cls){
 const nowParts = new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'})
   .formatToParts(new Date()).reduce((a,p)=>(a[p.type]=p.value,a),{});
 const today = {y:+nowParts.year, m:+nowParts.month-1, d:+nowParts.day};
-
 function ymd(y,m,d){ return Date.UTC(y,m,d); }
 const startUtc = ymd(START_Y, START_M, START_D);
 
-let running = START;
-const root = document.getElementById('months');
-
-months.forEach((mo, idx) => {
-  let html = `<section class="month"><div class="kick">Month ${idx+1}</div><h2>${mo.name}</h2><div class="tablebox"><table><thead><tr><th class="date">Date</th><th>Outgoing</th><th>Incoming</th><th class="remaining">Remaining</th></tr></thead><tbody>`;
-  for (let d=1; d<=mo.days; d++){
-    const e = mo.events[d] || {};
-    const cellUtc = ymd(mo.y, mo.m, d);
-    const isToday = today.y===mo.y && today.m===mo.m && today.d===d;
-    const onOrAfterStart = cellUtc >= startUtc;
-    if (onOrAfterStart){
-      (e.o||[]).forEach(x => running -= x[1]);
-      (e.i||[]).forEach(x => running += x[1]);
+function render(start){
+  const root = document.getElementById('months');
+  root.innerHTML = '';
+  document.getElementById('startLabel').textContent = fmt(start);
+  const input = document.getElementById('startBalance');
+  if (document.activeElement !== input) input.value = String(start);
+  let running = start;
+  cloneMonths().forEach((mo, idx) => {
+    let html = `<section class="month"><div class="kick">Month ${idx+1}</div><h2>${mo.name}</h2><div class="tablebox"><table><thead><tr><th class="date">Date</th><th>Outgoing</th><th>Incoming</th><th class="remaining">Remaining</th></tr></thead><tbody>`;
+    for (let d=1; d<=mo.days; d++){
+      const e = mo.events[d] || {};
+      const cellUtc = ymd(mo.y, mo.m, d);
+      const isToday = today.y===mo.y && today.m===mo.m && today.d===d;
+      const onOrAfterStart = cellUtc >= startUtc;
+      if (onOrAfterStart){
+        (e.o||[]).forEach(x => running -= x[1]);
+        (e.i||[]).forEach(x => running += x[1]);
+      }
+      const wd = new Intl.DateTimeFormat('en-GB',{weekday:'short',timeZone:'UTC'}).format(new Date(Date.UTC(mo.y, mo.m, d)));
+      html += `<tr${isToday?' class="today"':''}><td class="date">${wd} ${d}${isToday?' <span class="tag">today</span>':''}</td><td>${ev(e.o,'out')}</td><td>${ev(e.i,'income')}</td><td class="${onOrAfterStart?'money':'muted'}">${onOrAfterStart?fmt(running):'—'}</td></tr>`;
     }
-    const wd = new Intl.DateTimeFormat('en-GB',{weekday:'short',timeZone:'UTC'}).format(new Date(Date.UTC(mo.y, mo.m, d)));
-    html += `<tr${isToday?' class="today"':''}><td class="date">${wd} ${d}${isToday?' <span class="tag">today</span>':''}</td><td>${ev(e.o,'out')}</td><td>${ev(e.i,'income')}</td><td class="${onOrAfterStart?'money':'muted'}">${onOrAfterStart?fmt(running):'—'}</td></tr>`;
+    html += '</tbody></table></div></section>';
+    root.insertAdjacentHTML('beforeend', html);
+  });
+}
+
+function localStart(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw==null || raw==='') return DEFAULT_START;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : DEFAULT_START;
+  }catch(_){ return DEFAULT_START; }
+}
+
+function setStatus(msg){ document.getElementById('saveStatus').textContent = msg; }
+
+async function loadCloud(){
+  try{
+    const res = await fetch('/api/finance?resource=state',{cache:'no-store'});
+    if (!res.ok) throw new Error('sync unavailable');
+    const data = await res.json();
+    const n = Number(data.confirmedBalance ?? data.confirmed_balance ?? data.state?.confirmed_balance);
+    if (Number.isFinite(n)){
+      localStorage.setItem(STORAGE_KEY, String(n));
+      render(n);
+      setStatus('Loaded confirmed starting balance from cloud sync.');
+      return;
+    }
+  }catch(_){}
+  render(localStart());
+  setStatus('Using saved / default starting balance. Cloud sync will attach when available.');
+}
+
+async function saveStart(){
+  const n = Number(document.getElementById('startBalance').value);
+  if (!Number.isFinite(n) || n < 0){
+    setStatus('Enter a valid starting balance.');
+    return;
   }
-  html += '</tbody></table></div></section>';
-  root.insertAdjacentHTML('beforeend', html);
+  try{ localStorage.setItem(STORAGE_KEY, String(n)); }catch(_){}
+  render(n);
+  setStatus('Saved on this device. Trying cloud…');
+  try{
+    const res = await fetch('/api/finance?resource=state',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({confirmedBalance:n})
+    });
+    if (!res.ok) throw new Error('cloud save failed');
+    setStatus('Starting balance saved to the finance database.');
+  }catch(_){
+    setStatus('Saved on this device. Cloud save unavailable right now.');
+  }
+}
+
+document.getElementById('saveBalance').addEventListener('click', saveStart);
+document.getElementById('startBalance').addEventListener('keydown', e => {
+  if (e.key === 'Enter') saveStart();
 });
+loadCloud();
 </script>
 </body>
 </html>
