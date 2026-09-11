@@ -73,8 +73,8 @@ td{padding:6px 7px;font-size:9.5px;border-bottom:1px solid var(--line);height:27
       <div class="summary">
         <span>Starting balance · from 10 Sep 2026</span><strong id="startLabel">£300.00</strong>
         <span>Sage Share & Save · 18 Sep</span><strong class="income">~£1,225.00 <span class="tag">expected</span></strong>
-        <span>Pam & Nath after solicitor reserve · 18 Sep</span><strong class="income">£743.75 <span class="tag">planning</span></strong>
-        <span>Solicitor · divorce running total (undated)</span><strong class="out">£350.00</strong>
+        <span>Pam & Nath after solicitor reserve · 18 Sep</span><strong class="income">£599.75 <span class="tag">planning</span></strong>
+        <span>Solicitor · divorce running total (undated)</span><strong class="out">£494.00</strong>
         <span>1st of month (mortgage, council, water, life, diesel, gas+elec)</span><strong class="out">£806.00</strong>
         <span>Food every Sunday</span><strong class="out">£50.00</strong>
         <span>ChatGPT · 5th</span><strong class="out">£22.00</strong>
@@ -89,12 +89,12 @@ td{padding:6px 7px;font-size:9.5px;border-bottom:1px solid var(--line);height:27
       <div class="siderow"><span>Food</span><strong>£50 every Sunday</strong></div>
       <div class="siderow"><span>Diesel</span><strong>£150 on the 1st</strong></div>
       <div class="siderow"><span>Gas + electricity</span><strong>£110 on the 1st</strong></div>
-      <div class="siderow"><span>Solicitor · divorce</span><strong>£350 undated</strong></div>
-      <p class="muted" style="margin:12px 0 0;font-size:11px;line-height:1.45">Solicitor has no calendar date. It is taken off Pam & Nath before the 18 Sep credit.</p>
+      <div class="siderow"><span>Solicitor · divorce</span><strong>£494 undated</strong></div>
+      <p class="muted" style="margin:12px 0 0;font-size:11px;line-height:1.45">Solicitor has no calendar date. Running total comes off Pam & Nath before the 18 Sep credit. Tell this chat when the bill changes.</p>
     </aside>
   </div>
   <div class="note">
-    <strong>Photography:</strong> Pam & Nath remaining £2,187.50. Personal 50% = £1,093.75. Solicitor reserve £350 (only verified solicitor figure here; stated paid 6 Aug 2026) comes off first. Net planning inflow 18 Sep = £743.75. No solicitor date on the grid.
+    <strong>Photography:</strong> Pam & Nath remaining £2,187.50. Personal 50% = £1,093.75. Solicitor running total £494 (user 11 Sep 2026) comes off first. Net planning inflow 18 Sep = £599.75. No solicitor date on the grid.
   </div>
 </div>
 <script>
@@ -104,7 +104,7 @@ const START_Y = 2026, START_M = 8, START_D = 10;
 const DEFAULT_START = 300;
 const FOOD = 50, DIESEL = 150, ENERGY = 110;
 const PAM_SHARE = 1093.75;
-const SOLICITOR_RESERVE = 350;
+const SOLICITOR_RESERVE = 494;
 const PAM_NET = Math.max(0, PAM_SHARE - SOLICITOR_RESERVE);
 const baseMonths = [
   {name:'September 2026', y:2026, m:8, days:30, events:{18:{i:[['Sage Share & Save', 1225, 'expected'],['Pam & Nath after solicitor reserve', PAM_NET, 'planning']]}}},
