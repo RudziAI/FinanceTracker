@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Photography + New House — Finance Tracker</title>
 <style>
 :root{
@@ -10,43 +10,45 @@
   --panel:#fff; --soft:#edf2ef; --line:#d8dedb; --bg:#f6f5f0;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
-.app{padding:26px}
-.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+html,body{margin:0;overflow-x:clip;max-width:100%}
+body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.app{padding:16px 12px;max-width:720px;margin:0 auto}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .nav a{padding:10px 14px;border:1px solid var(--line);border-radius:9px;background:var(--soft);color:var(--ink);text-decoration:none;font-size:12px;font-weight:760}
 .nav a.active{background:var(--teal);color:#fff;border-color:var(--teal)}
 .kick{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);font-weight:800}
-.head{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;max-width:1500px;margin-bottom:18px}
-.card,.tablebox,.side{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:18px}
+.card,.side{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:16px;margin-bottom:12px}
 .card{border-top:3px solid var(--teal)}
-h1{font-size:28px;margin:5px 0 8px}
-.summary{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;margin-top:10px}
-.summary strong{text-align:right}
+h1{font-size:24px;margin:5px 0 8px}
+.summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;font-size:12px;margin-top:10px}
+.summary span{min-width:0;overflow-wrap:anywhere}
+.summary strong{text-align:right;white-space:nowrap}
 .income{color:var(--teal)}
 .out{color:var(--gold)}
 .inputrow{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
 .inputrow label{font-size:11px;font-weight:760;color:var(--muted);width:100%}
-.inputrow input{min-height:42px;min-width:160px;flex:1;border:1px solid var(--line);border-radius:9px;padding:8px 11px;background:var(--soft);color:inherit;font-size:16px}
+.inputrow input{min-height:42px;min-width:0;flex:1 1 140px;border:1px solid var(--line);border-radius:9px;padding:8px 11px;background:var(--soft);color:inherit;font-size:16px}
 .inputrow button{min-height:42px;border:0;border-radius:9px;padding:8px 14px;background:var(--teal);color:#fff;font-weight:750;cursor:pointer}
-.workspace{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:16px;max-width:1500px;align-items:start}
-.months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.month h2{font-size:19px;margin:3px 0 8px}
-.tablebox{padding:0;overflow:hidden;border-radius:15px}
-table{width:100%;border-collapse:collapse;table-layout:fixed}
-th{padding:9px 7px;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;border-bottom:1px solid var(--line)}
-td{padding:6px 7px;font-size:9.5px;border-bottom:1px solid var(--line);height:27px;vertical-align:top}
-.date{width:62px;font-weight:700}
-.remaining{width:82px}
-.event{display:flex;justify-content:space-between;gap:4px;margin-bottom:2px}
-.money{white-space:nowrap;font-variant-numeric:tabular-nums}
-.tag{font-size:7px;border:1px solid currentColor;border-radius:99px;padding:1px 4px;text-transform:uppercase}
-.today{background:#e7f0ee}
+.month{margin-bottom:8px}
+.month h2{font-size:20px;margin:4px 0 8px}
+.cal-wrap{display:flex;flex-direction:column;gap:6px;overflow-x:hidden;max-width:100%}
+.cal-day{padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.cal-day.is-empty{opacity:.55;padding:6px 10px}
+.cal-day.is-empty .cal-moves{display:none}
+.cal-day.is-today{background:#e7f0ee;border-color:var(--teal)}
+.cal-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.cal-date{font-weight:700;font-size:13px}
+.cal-rem{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;white-space:nowrap}
+.cal-moves{margin-top:4px}
+.cal-line{display:flex;justify-content:space-between;gap:8px;font-size:13px;min-width:0}
+.cal-line span{min-width:0;overflow-wrap:anywhere}
+.cal-line strong{flex:0 0 auto;font-variant-numeric:tabular-nums}
+.cal-line.in{color:var(--teal)}
+.cal-line.out{color:var(--gold)}
+.tag{font-size:9px;border:1px solid currentColor;border-radius:99px;padding:1px 5px;text-transform:uppercase}
 .muted{color:var(--muted)}
-.side h3{margin:4px 0 10px;font-size:16px}
-.siderow{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;padding:7px 0;border-bottom:1px solid var(--line)}
-.note{margin-top:18px;max-width:1500px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:13px;font-size:11px;line-height:1.55}
-@media(max-width:1200px){.months,.head,.workspace{grid-template-columns:1fr}}
-@media(max-width:600px){.app{padding:14px 8px}}
+.siderow{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)}
+.note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:13px;font-size:12px;line-height:1.55}
 </style>
 </head>
 <body>
@@ -56,60 +58,53 @@ td{padding:6px 7px;font-size:9.5px;border-bottom:1px solid var(--line);height:27
     <a class="active" href="/photography-house.html">Photography + New House</a>
     <a href="/outgoings">Manage Direct Debits</a>
   </nav>
-  <div class="head">
-    <section class="card">
-      <div class="kick">Dedicated pot · finance_v13</div>
-      <h1>Photography + New House</h1>
-      <div class="muted">Three-month calendar · Sep–Nov 2026 · personal / new-house pot only.</div>
-      <div class="inputrow">
-        <label for="startBalance">Starting balance (£)</label>
-        <input id="startBalance" type="number" min="0" step="0.01" inputmode="decimal" value="300">
-        <button id="saveBalance" type="button">Save starting balance</button>
-      </div>
-      <div id="saveStatus" class="muted" style="margin-top:8px">Uses the same confirmed balance as the main dashboard when cloud sync is available.</div>
-    </section>
-    <section class="card">
-      <div class="kick">Running new-house pot</div>
-      <div class="summary">
-        <span>Starting balance · from 10 Sep 2026</span><strong id="startLabel">£300.00</strong>
-        <span>Sage Share & Save · 18 Sep</span><strong class="income">~£1,225.00 <span class="tag">expected</span></strong>
-        <span>Pam & Nath after solicitor reserve · 18 Sep</span><strong class="income">£599.75 <span class="tag">planning</span></strong>
-        <span>Solicitor · divorce running total (undated)</span><strong class="out">£494.00</strong>
-        <span>1st of month (mortgage, council, water, life, diesel, gas+elec)</span><strong class="out">£806.00</strong>
-        <span>Food every Sunday</span><strong class="out">£50.00</strong>
-        <span>ChatGPT · 5th</span><strong class="out">£22.00</strong>
-      </div>
-    </section>
-  </div>
-  <div class="workspace">
-    <div id="months" class="months"></div>
-    <aside class="side">
-      <div class="kick">User-approved dates</div>
-      <h3>Now on the calendar</h3>
-      <div class="siderow"><span>Food</span><strong>£50 every Sunday</strong></div>
-      <div class="siderow"><span>Diesel</span><strong>£150 on the 1st</strong></div>
-      <div class="siderow"><span>Gas + electricity</span><strong>£110 on the 1st</strong></div>
-      <div class="siderow"><span>Solicitor · divorce</span><strong>£494 undated</strong></div>
-      <p class="muted" style="margin:12px 0 0;font-size:11px;line-height:1.45">Solicitor has no calendar date. Running total comes off Pam & Nath before the 18 Sep credit. Tell this chat when the bill changes.</p>
-    </aside>
-  </div>
+  <section class="card">
+    <div class="kick">Dedicated pot · finance_v13</div>
+    <h1>Photography + New House</h1>
+    <div class="muted">Three-month calendar · Sep–Nov 2026 · stacked for phone · no sideways scroll.</div>
+    <div class="inputrow">
+      <label for="startBalance">Starting balance (£)</label>
+      <input id="startBalance" type="number" min="0" step="0.01" inputmode="decimal" value="279">
+      <button id="saveBalance" type="button">Save starting balance</button>
+    </div>
+    <div id="saveStatus" class="muted" style="margin-top:8px">Uses the same confirmed balance as the main dashboard when cloud sync is available.</div>
+  </section>
+  <section class="card">
+    <div class="kick">Running new-house pot</div>
+    <div class="summary">
+      <span>Starting balance · from 11 Sep 2026</span><strong id="startLabel">£279.00</strong>
+      <span>Sage Share &amp; Save · 18 Sep</span><strong class="income">~£1,225.00 <span class="tag">expected</span></strong>
+      <span>Pam &amp; Nath after solicitor · 17 Sep</span><strong class="income">£599.75 <span class="tag">bank</span></strong>
+      <span>Solicitor · divorce running total (undated)</span><strong class="out">£494.00</strong>
+    </div>
+  </section>
+  <div id="months"></div>
+  <aside class="side">
+    <div class="kick">User-approved dates</div>
+    <h3 style="margin:4px 0 10px;font-size:16px">Now on the calendar</h3>
+    <div class="siderow"><span>Food</span><strong>£50 every Sunday</strong></div>
+    <div class="siderow"><span>Diesel</span><strong>£150 on the 1st</strong></div>
+    <div class="siderow"><span>Gas + electricity</span><strong>£110 on the 1st from Oct</strong></div>
+    <div class="siderow"><span>Solicitor · divorce</span><strong>£494 undated</strong></div>
+    <p class="muted" style="margin:12px 0 0;font-size:12px;line-height:1.45">Wedding money: due 30 days before the wedding, then +5 days to hit the bank. Pam &amp; Nath bank date 17 Sep. Sarah &amp; Aaron written off.</p>
+  </aside>
   <div class="note">
-    <strong>Photography:</strong> Pam & Nath remaining £2,187.50. Personal 50% = £1,093.75. Solicitor running total £494 (user 11 Sep 2026) comes off first. Net planning inflow 18 Sep = £599.75. No solicitor date on the grid.
+    <strong>Photography:</strong> Pam &amp; Nath remaining £2,187.50. Personal 50% = £1,093.75. Solicitor £494 comes off first. Net on calendar 17 Sep = £599.75.
   </div>
 </div>
 <script>
 const fmt = n => '£' + Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
 const STORAGE_KEY = 'finance_tracker_confirmed_balance_v1';
-const START_Y = 2026, START_M = 8, START_D = 10;
-const DEFAULT_START = 300;
+const START_Y = 2026, START_M = 8, START_D = 11;
+const DEFAULT_START = 279;
 const FOOD = 50, DIESEL = 150, ENERGY = 110;
 const PAM_SHARE = 1093.75;
 const SOLICITOR_RESERVE = 494;
 const PAM_NET = Math.max(0, PAM_SHARE - SOLICITOR_RESERVE);
 const baseMonths = [
-  {name:'September 2026', y:2026, m:8, days:30, events:{18:{i:[['Sage Share & Save', 1225, 'expected'],['Pam & Nath after solicitor reserve', PAM_NET, 'planning']]}}},
-  {name:'October 2026', y:2026, m:9, days:31, events:{1:{o:[['New mortgage', 300, 'planning'],['Newcastle City Council', 171, 'planning'],['Northumbrian Water', 50, 'planning'],['Life insurance', 25, 'planning']]},5:{o:[['ChatGPT', 22, 'planning']]}}},
-  {name:'November 2026', y:2026, m:10, days:30, events:{1:{o:[['New mortgage', 300, 'planning'],['Newcastle City Council', 171, 'planning'],['Northumbrian Water', 50, 'planning'],['Life insurance', 25, 'planning']]},5:{o:[['ChatGPT', 22, 'planning']]}}}
+  {name:'September 2026', y:2026, m:8, days:30, events:{17:{i:[['Pam & Nath after solicitor reserve', PAM_NET, 'bank']]},18:{i:[['Sage Share & Save', 1225, 'expected']]}}},
+  {name:'October 2026', y:2026, m:9, days:31, events:{1:{o:[['NatWest mortgage first', 322.12],['Life insurance', 25],['Gas + electricity', ENERGY]]}}},
+  {name:'November 2026', y:2026, m:10, days:30, events:{1:{o:[['NatWest mortgage', 292.12],['Life insurance', 25],['Gas + electricity', ENERGY]]}}}
 ];
 function cloneMonths(){
   return baseMonths.map(mo => {
@@ -120,17 +115,21 @@ function cloneMonths(){
     });
     for (let d=1; d<=mo.days; d++){
       const wd = new Date(Date.UTC(mo.y, mo.m, d)).getUTCDay();
-      if (!events[d]) events[d] = {};
+      if (!events[d]) events[d] = {o:[], i:[]};
       if (!events[d].o) events[d].o = [];
       if (!events[d].i) events[d].i = [];
-      if (d === 1){ events[d].o.push(['Diesel', DIESEL, 'approved']); events[d].o.push(['Gas + electricity', ENERGY, 'approved']); }
+      if (d === 1){
+        events[d].o.push(['Diesel', DIESEL, 'approved']);
+        events[d].o.push(['EE device', 99.38]);
+        events[d].o.push(['EE Limited', 123.20]);
+      }
       if (wd === 0) events[d].o.push(['Food', FOOD, 'approved']);
     }
     return {name:mo.name, y:mo.y, m:mo.m, days:mo.days, events};
   });
 }
-function ev(items, cls){
-  return (items||[]).map(x => `<div class="event ${cls}"><span>${x[0]}${x[2]?` <span class="tag">${x[2]}</span>`:''}</span><strong class="money">${fmt(x[1])}</strong></div>`).join('');
+function lines(items, cls){
+  return (items||[]).map(x => `<div class="cal-line ${cls}"><span>${x[0]}${x[2]?` <span class="tag">${x[2]}</span>`:''}</span><strong>${fmt(x[1])}</strong></div>`).join('');
 }
 const nowParts = new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).reduce((a,p)=>(a[p.type]=p.value,a),{});
 const today = {y:+nowParts.year, m:+nowParts.month-1, d:+nowParts.day};
@@ -144,17 +143,21 @@ function render(start){
   if (document.activeElement !== input) input.value = String(start);
   let running = start;
   cloneMonths().forEach((mo, idx) => {
-    let html = `<section class="month"><div class="kick">Month ${idx+1}</div><h2>${mo.name}</h2><div class="tablebox"><table><thead><tr><th class="date">Date</th><th>Outgoing</th><th>Incoming</th><th class="remaining">Remaining</th></tr></thead><tbody>`;
+    let html = `<section class="month card"><div class="kick">Month ${idx+1}</div><h2>${mo.name}</h2><div class="cal-wrap">`;
     for (let d=1; d<=mo.days; d++){
-      const e = mo.events[d] || {};
+      const e = mo.events[d] || {o:[],i:[]};
       const cellUtc = ymd(mo.y, mo.m, d);
       const isToday = today.y===mo.y && today.m===mo.m && today.d===d;
       const onOrAfterStart = cellUtc >= startUtc;
+      const has = (e.o&&e.o.length) || (e.i&&e.i.length);
       if (onOrAfterStart){ (e.o||[]).forEach(x => running -= x[1]); (e.i||[]).forEach(x => running += x[1]); }
       const wd = new Intl.DateTimeFormat('en-GB',{weekday:'short',timeZone:'UTC'}).format(new Date(Date.UTC(mo.y, mo.m, d)));
-      html += `<tr${isToday?' class="today"':''}><td class="date">${wd} ${d}${isToday?' <span class="tag">today</span>':''}</td><td>${ev(e.o,'out')}</td><td>${ev(e.i,'income')}</td><td class="${onOrAfterStart?'money':'muted'}">${onOrAfterStart?fmt(running):'—'}</td></tr>`;
+      html += `<article class="cal-day${isToday?' is-today':''}${has?'':' is-empty'}">
+        <div class="cal-top"><span class="cal-date">${wd} ${d}${isToday?' <span class="tag">today</span>':''}</span><span class="cal-rem">${onOrAfterStart?fmt(running):'—'}</span></div>
+        <div class="cal-moves">${lines(e.o,'out')}${lines(e.i,'in')}</div>
+      </article>`;
     }
-    html += '</tbody></table></div></section>';
+    html += '</div></section>';
     root.insertAdjacentHTML('beforeend', html);
   });
 }
